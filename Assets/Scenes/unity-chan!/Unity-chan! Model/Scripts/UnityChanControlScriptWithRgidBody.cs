@@ -52,6 +52,11 @@ namespace UnityChan
 		static int jumpState = Animator.StringToHash ("Base Layer.Jump");
 		static int restState = Animator.StringToHash ("Base Layer.Rest");
 
+		//　動く床の上にいるかどうか
+		private bool onTheFloor = false;
+		//　動く床の動いていく方向
+		private Vector3 floorMoveDirection;
+
 		// 初期化
 		void Start ()
 		{
@@ -107,15 +112,18 @@ namespace UnityChan
 					}
 				}
 			}
-		
+			//　ベルトコンベアーに乗っていたら力を加える
+			if (onTheFloor) {
+				velocity += floorMoveDirection;
+			}	
 
 			// 上下のキー入力でキャラクターを移動させる
 			transform.localPosition += velocity * Time.fixedDeltaTime;
 
 			// 左右のキー入力でキャラクタをY軸で旋回させる
 			transform.Rotate (0, h * rotateSpeed, 0);	
-	
-
+			
+			
 			// 以下、Animatorの各ステート中での処理
 			// Locomotion中
 			// 現在のベースレイヤーがlocoStateの時
@@ -183,6 +191,7 @@ namespace UnityChan
 				}
 			}
 		}
+		
 
 		/*void OnGUI ()
 		{
@@ -195,13 +204,31 @@ namespace UnityChan
 			GUI.Label (new Rect (Screen.width - 245, 130, 250, 30), "Alt : LookAt Camera");
 		}*/
 
-
 		// キャラクターのコライダーサイズのリセット関数
 		void resetCollider ()
 		{
 			// コンポーネントのHeight、Centerの初期値を戻す
 			col.height = orgColHight;
 			col.center = orgVectColCenter;
+		}
+		
+		void OnControllerColliderHit(ControllerColliderHit col) {
+ 
+		Debug.DrawLine (transform.position + Vector3.up * 0.1f, transform.position + Vector3.up * 0.1f + Vector3.down * 0.2f, Color.blue);
+			//　他のコライダと接触していたら下向きにレイを飛ばしてBlockかどうか調べる
+			if(Physics.Linecast (transform.position + Vector3.up * 0.1f, transform.position + Vector3.up * 0.1f + Vector3.down * 0.2f, LayerMask.GetMask ("Block"))) {
+				var beltConveyor = col.gameObject.GetComponent<BeltConveyor> ();
+				if(beltConveyor != null) {
+					floorMoveDirection = beltConveyor.ConveyorVelocity();
+					onTheFloor = true;
+				} 
+				else {
+					onTheFloor = false;
+				}
+			}
+			else {
+				onTheFloor = false;
+			}
 		}
 	}
 }
