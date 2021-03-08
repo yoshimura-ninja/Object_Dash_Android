@@ -23,21 +23,25 @@ public class DeadWallManager : MonoBehaviour
     //オブジェクトの速度
     public float speedx = 0.00f;
     public float speedz = 0.00f;
-    //オブジェクトの横移動の最大距離
-    public float max = 10.0f;
-    
+    public float max_time = 5.00f; // 往復時間設定
+
+    private float step_time; // 経過時間カウント用
+
+
     // Start is called before the first frame update
     void Start()
     {
         //インスタンス生成
         restart = new RestartManager(player, text);
+        step_time = 0.0f;  // 経過時間初期化
     }
 
     void Update()
     {
-    
+        
         //フレーム毎speedの値分だけx軸方向に移動する
         this.gameObject.transform.Translate(speedx,0,speedz);
+        /*
         //Transformのxの値が一定値を超えたときに向きを反対にする
         if(this.gameObject.transform.position.x > max || this.gameObject.transform.position.x < (-max))
         {
@@ -46,8 +50,18 @@ public class DeadWallManager : MonoBehaviour
         if(this.gameObject.transform.position.z > max || this.gameObject.transform.position.z < (-max))
         {
             speedz = speedz*(-1);
+        }*/
+
+        // 経過時間をカウント
+        step_time += Time.deltaTime;
+        // 
+        if (step_time >= max_time)
+        {
+            speedx = speedx*(-1);
+            speedz = speedz*(-1);
+            step_time = 0.0f;  // 経過時間初期化
         }
-    
+
         //ゲームオーバーしていて画面がクリックされたとき
         if (restart.IsGameOver() && Input.GetMouseButton(0))
         {

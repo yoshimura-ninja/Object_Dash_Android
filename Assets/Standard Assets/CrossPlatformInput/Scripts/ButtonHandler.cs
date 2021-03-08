@@ -1,10 +1,14 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace UnityStandardAssets.CrossPlatformInput
 {
     public class ButtonHandler : MonoBehaviour
     {
+        GameObject unitychan; //シーン内のUnityちゃんを格納
+        //UnityChanControlScriptWithRgidBody script; //UnityChanScriptを格納
+        public GameObject player;
 
         public string Name;
 
@@ -21,33 +25,37 @@ namespace UnityStandardAssets.CrossPlatformInput
 
         public void SetUpState()
         {
-            CrossPlatformInputManager.SetButtonUp("Jump");
+            //CrossPlatformInputManager.SetButtonUp("Jump");
         }
 
 
         public void SetAxisPositiveState()
         {
-            CrossPlatformInputManager.SetAxisPositive(Name);
+            //CrossPlatformInputManager.SetAxisPositive(Name);
         }
 
 
         public void SetAxisNeutralState()
         {
-            CrossPlatformInputManager.SetAxisZero(Name);
+            //CrossPlatformInputManager.SetAxisZero(Name);
         }
 
 
         public void SetAxisNegativeState()
         {
-            CrossPlatformInputManager.SetAxisNegative("jump");
+            //CrossPlatformInputManager.SetAxisNegative("jump");
         }
 
         public void Update()
-        {
-            if(CrossPlatformInputManager.GetButton ("Jump"))
+        {/*
+            if(CrossPlatformInputManager.SetButtonDown("Jump"))
             {
                 Debug.Log ("Input.getButtonDown jump");
-            }
+            }*/
+        }
+        public void OnClick()
+        {
+            CrossPlatformInputManager.SetAxisNegative("jump");
         }
     }
 }
